@@ -34,21 +34,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Create static files
+      - name: Prepare Deployment Files
         run: |
-          mkdir -p static
-          cp -r templates/* static/
+          mkdir -p deployment
+          # Copy all files needed for deployment
+          cp -r templates/* deployment/
+          cp -r static/* deployment/
+          cp -r dist/* deployment/
 
-      - name: Upload Build Artifact (Frontend)
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
-
-      - name: Upload Static Files (Backend)
-        uses: actions/upload-artifact@v4  # Fix: Changed from v3 to v4
-        with:
-          name: static-files
-          path: static
+          path: 'deployment'  # All deployment files in one directory
 
   deploy:
     needs: build
@@ -63,4 +60,4 @@ jobs:
 
     steps:
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v3  # Updated to v3
